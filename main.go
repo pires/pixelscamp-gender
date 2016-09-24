@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+        "strings"
 
 	c "github.com/hstove/gender/classifier"
 )
@@ -49,7 +50,7 @@ func printStats(pixels pixels) {
 
 	// Perform the magic stuff
 	for _, pixel := range pixels {
-		gender, _ := c.Classify(classifier, pixel.Name)
+                gender, _ := c.Classify(classifier, strings.Split(pixel.Name, " ")[0])
 		switch gender {
 		case string(c.Boy):
 			numMale += 1
