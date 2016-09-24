@@ -15,7 +15,6 @@ go get -u github.com/hstove/gender/classifier
 ## Run
 
 ```
-curl "https://api.pixels.camp/users/?count=1000" > users.json
 go run main.go
 ```
 
@@ -25,7 +24,3 @@ go run main.go
 cd classifier
 go run classifier.go
 ```
-
-## TODO
-
-* Retrieve directly from API instead of JSON file

@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-        "strings"
+	"net/http"
+	"strings"
 
 	c "github.com/hstove/gender/classifier"
 )
@@ -19,25 +19,6 @@ type jsonPixels struct {
 	Users pixels `json: users`
 }
 
-// loadPixelsFromJSONFile loads PixelsCamp users from a JSON file
-func loadPixelsFromJSONFile(filepath string) (pixels, error) {
-	// Open JSON file
-	file, err := os.Open(filepath)
-	if err != nil {
-		return nil, err
-	}
-
-	// Load JSON
-	jsonParser := json.NewDecoder(file)
-
-	var jsonPixels jsonPixels
-	if err := jsonParser.Decode(&jsonPixels); err != nil {
-		return nil, err
-	}
-
-	return jsonPixels.Users, nil
-}
-
 func percent(num, numTotal int) float64 {
 	return (float64(num) / float64(numTotal) * 100)
 }
@@ -50,7 +31,7 @@ func printStats(pixels pixels) {
 
 	// Perform the magic stuff
 	for _, pixel := range pixels {
-                gender, _ := c.Classify(classifier, strings.Split(pixel.Name, " ")[0])
+		gender, _ := c.Classify(classifier, strings.Split(pixel.Name, " ")[0])
 		switch gender {
 		case string(c.Boy):
 			numMale += 1
@@ -74,14 +55,21 @@ func printStats(pixels pixels) {
 }
 
 func main() {
-	// Retrieve first names
-	filepath := "users.json"
-	pixels, err := loadPixelsFromJSONFile(filepath)
+	// Retrieve Pixels Camp atendees from API
+	url := "https://api.pixels.camp/users/?count=1000"
+	res, err := http.Get(url)
 	if err != nil {
-		fmt.Errorf("There was an error while loading JSON from %s, %v", filepath, err)
+		fmt.Errorf("There was an error while querying the API: %v", err)
+	}
+
+	// Decode response
+	jsonParser := json.NewDecoder(res.Body)
+	var pixels jsonPixels
+	if err := jsonParser.Decode(&pixels); err != nil {
+		fmt.Errorf("There was an error while reading the response: %v", err)
 	}
 
 	// Print stats
 	fmt.Println("Pixels:")
-	printStats(pixels)
+	printStats(pixels.Users)
 }
