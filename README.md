@@ -1,4 +1,4 @@
-# pixels-gender
+# pixelscamp-gender
 
 I wanted to know the gender ratio for PixelsCamp 2016. I started by finding lists of names on the web, and while it was easy
 to find for UK and US, the same didn't apply for Portugal. Thanks to [Publico](https://publico.pt) and [Central de Dados](https://github.com/centraldedados/nomes_proprios)
